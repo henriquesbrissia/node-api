@@ -36,31 +36,31 @@ export const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Verificar se o usuário existe
-    const user = await findUserByEmail(email);
-    if (!user) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+    const user = await db
+      .select()
+      .from(users)
+      .where(user.email.eq(email))
+      .limit(1);
+    if (user.lenght === 0) {
+      return res.status(400).send({ message: 'Invalid credentials' });
     }
 
-    // Verificar se a senha está correta
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await bcrypt.compare(password, user[0].password);
     if (!isPasswordValid) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(400).send({ message: 'Invalid credentials' });
     }
 
-    // Gerar um token JWT
     const token = jwt.sign(
-      { id: user.id, email: user.email },
+      { id: user[0].id, email: user[0].email },
       process.env.JWT_SECRET,
       {
         expiresIn: '1h',
       }
     );
 
-    // Retornar o token
-    res.status(200).json({ token });
+    res.status(200).send({ token });
   } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).send({ message: 'Server error' });
   }
 };
 
