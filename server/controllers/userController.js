@@ -1,29 +1,31 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { createUser, findUserByEmail } from '../models/userModel.js';
+import db from '../config/drizzle.js';
+import { users } from '../models/userModel.js';
 
-// Registro de usuário
 export const registerUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Verificar se o usuário já existe
-    const existingUser = await findUserByEmail(email);
-    if (existingUser) {
-      return res.status(400).json({ message: 'User already exists' });
+    const existingUser = await db
+      .select()
+      .from(users)
+      .where(users.email.eq(email))
+      .limit(1);
+    if (existingUser.lenght > 0) {
+      return res.status(400).send({ message: 'User already exists' });
     }
 
-    // Encriptar a senha
     const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = await db
+      .insert(users)
+      .values({
+        email,
+        password: hashedPassword,
+      })
+      .returning();
 
-    // Criar o novo usuário
-    const newUser = await createUser(email, hashedPassword);
-
-    // Retornar sucesso
-    res.status(201).json({
-      id: newUser.id,
-      email: newUser.email,
-    });
+    res.status(201).send(newUser);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }
