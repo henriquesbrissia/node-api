@@ -90,22 +90,18 @@ export const requestPasswordReset = async (req, res) => {
   }
 };
 
-// Função para redefinir senha
 export const resetPassword = async (req, res) => {
   const { resetToken, newPassword } = req.body;
 
   try {
-    // Verificar o token JWT
     const decoded = jwt.verify(resetToken, process.env.JWT_SECRET);
 
-    // Encriptar a nova senha
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    // Atualizar a senha do usuário no banco de dados
-    await pool.query('UPDATE users SET password = $1 WHERE id = $2', [
-      hashedPassword,
-      decoded.id,
-    ]);
+    await db
+      .update(users)
+      .set({ password: hashedPassword })
+      .where(eq(users.id, decoded.id));
 
     res.status(200).send({ message: 'Password updated successfully' });
   } catch (error) {
