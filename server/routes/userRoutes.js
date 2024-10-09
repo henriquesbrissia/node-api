@@ -1,4 +1,3 @@
-import express from 'express';
 import {
   registerUser,
   loginUser,
@@ -6,18 +5,11 @@ import {
   resetPassword,
 } from '../controllers/userController.js';
 
-const router = express.Router();
+async function userRoutes(app, options) {
+  app.post('/register', registerUser);
+  app.post('/login', loginUser);
+  app.post('/reset-password-request', requestPasswordReset);
+  app.post('/reset-password', resetPassword);
+}
 
-// Rota para registro de usuário
-router.post('/register', registerUser);
-
-// Rota para login de usuário
-router.post('/login', loginUser);
-
-// Rota para solicitar reset de senha
-router.post('/reset-password-request', requestPasswordReset);
-
-// Rota para redefinir a senha
-router.post('/reset-password', resetPassword);
-
-export default router;
+export default userRoutes;
