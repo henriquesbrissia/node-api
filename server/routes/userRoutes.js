@@ -4,6 +4,7 @@ import {
   requestPasswordReset,
   resetPassword,
 } from '../controllers/userController.js';
+import { protect } from '../middlewares/userMiddleware.js';
 
 async function userRoutes(app, options) {
   app.post('/register', registerUser);
