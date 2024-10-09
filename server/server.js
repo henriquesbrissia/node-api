@@ -1,11 +1,14 @@
-import express from 'express';
+import fastify from 'fastify';
 import userRoutes from './routes/userRoutes.js';
+import jwt from '@fastify/jwt';
 
-const app = express();
+const app = fastify({ logger: true });
 
-app.use(express.json());
+app.register(jwt, {
+  secret: process.env.JWT_SECRET,
+});
 
-app.use('/api/user', userRoutes);
+app.register(userRoutes, { prefix: '/api/user' });
 
 const PORT = process.env.PORT || 3000;
 
