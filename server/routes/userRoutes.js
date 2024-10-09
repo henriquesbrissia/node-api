@@ -7,9 +7,13 @@ import {
 
 async function userRoutes(app, options) {
   app.post('/register', registerUser);
-  app.post('/login', loginUser);
-  app.post('/reset-password-request', requestPasswordReset);
-  app.post('/reset-password', resetPassword);
+  app.post('/login', { preValidation: [protect] }, loginUser);
+  app.post(
+    '/reset-password-request',
+    { preValidation: [protect] },
+    requestPasswordReset
+  );
+  app.post('/reset-password', { preValidation: [protect] }, resetPassword);
 }
 
 export default userRoutes;
