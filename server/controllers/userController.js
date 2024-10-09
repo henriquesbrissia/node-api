@@ -31,7 +31,6 @@ export const registerUser = async (req, res) => {
   }
 };
 
-// Login de usuário
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
@@ -64,30 +63,30 @@ export const loginUser = async (req, res) => {
   }
 };
 
-// Função para solicitar reset de senha
 export const requestPasswordReset = async (req, res) => {
   const { email } = req.body;
 
   try {
-    // Verificar se o usuário existe
-    const user = await findUserByEmail(email);
-    if (!user) {
-      return res.status(400).json({ message: 'User not found' });
+    const user = await db
+      .select()
+      .from(users)
+      .where(user.email.eq(email))
+      .limit(1);
+    if (user.lenght === 0) {
+      return res.status(400).send({ message: 'User not found' });
     }
 
-    // Gerar token JWT para reset de senha
     const resetToken = jwt.sign(
-      { id: user.id, email: user.email },
+      { id: user[0].id, email: user[0].email },
       process.env.JWT_SECRET,
       {
         expiresIn: '15m',
       }
     );
 
-    // Aqui seria o momento de enviar o token via email mas vou retornar ele na resposta por enquanto pra facilitar
-    res.status(200).json({ resetToken });
+    res.status(200).send({ resetToken });
   } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).send({ message: 'Server error' });
   }
 };
 
@@ -108,8 +107,8 @@ export const resetPassword = async (req, res) => {
       decoded.id,
     ]);
 
-    res.status(200).json({ message: 'Password updated successfully' });
+    res.status(200).send({ message: 'Password updated successfully' });
   } catch (error) {
-    res.status(400).json({ message: 'Invalid or expired token' });
+    res.status(400).send({ message: 'Invalid or expired token' });
   }
 };
