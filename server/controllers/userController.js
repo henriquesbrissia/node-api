@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import db from '../config/drizzle.js';
-import { users } from '../models/userModel.js';
+import db from '../drizzle/db.js';
+import { users } from '../drizzle/schema.js';
 
 export const registerUser = async (req, res) => {
   const { email, password } = req.body;
