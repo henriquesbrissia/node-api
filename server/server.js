@@ -10,8 +10,9 @@ app.register(jwt, {
 
 app.register(userRoutes, { prefix: '/api/user' });
 
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+try {
+  await app.listen({ port: 3000 });
+} catch (err) {
+  app.log.error(err);
+  process.exit(1);
+}
