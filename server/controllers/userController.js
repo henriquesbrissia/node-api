@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import db from '../drizzle/db.js';
 import { users } from '../drizzle/schema.js';
+import { eq } from 'drizzle-orm';
 
 export const registerUser = async (req, res) => {
   const { email, password } = req.body;
@@ -10,8 +11,8 @@ export const registerUser = async (req, res) => {
     const existingUser = await db
       .select()
       .from(users)
-      .where(users.email.eq(email))
-      .limit(1);
+      .where(eq(users.email, email))
+      .execute();
     if (existingUser.lenght > 0) {
       return res.status(400).send({ message: 'User already exists' });
     }
@@ -38,8 +39,8 @@ export const loginUser = async (req, res) => {
     const user = await db
       .select()
       .from(users)
-      .where(user.email.eq(email))
-      .limit(1);
+      .where(eq(users.email, email))
+      .execute();
     if (user.lenght === 0) {
       return res.status(400).send({ message: 'Invalid credentials' });
     }
@@ -70,8 +71,8 @@ export const requestPasswordReset = async (req, res) => {
     const user = await db
       .select()
       .from(users)
-      .where(user.email.eq(email))
-      .limit(1);
+      .where(eq(users.email, email))
+      .execute();
     if (user.lenght === 0) {
       return res.status(400).send({ message: 'User not found' });
     }
