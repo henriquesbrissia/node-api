@@ -16,12 +16,13 @@ export const registerUser = async (req, res) => {
       .select()
       .from(users)
       .where(eq(users.email, email))
-      .execute();
-    if (existingUser.length > 0) {
+      .findFirst();
+    if (existingUser) {
       return res.status(400).send({ message: 'User already exists' });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+
     const newUser = await db
       .insert(users)
       .values({
@@ -48,12 +49,13 @@ export const loginUser = async (req, res) => {
       .select()
       .from(users)
       .where(eq(users.email, email))
-      .execute();
-    if (user.length === 0) {
+      .findFirst();
+    if (!user) {
       return res.status(400).send({ message: 'Invalid credentials' });
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user[0].password);
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
     if (!isPasswordValid) {
       return res.status(400).send({ message: 'Invalid credentials' });
     }
@@ -78,8 +80,8 @@ export const requestPasswordReset = async (req, res) => {
       .select()
       .from(users)
       .where(eq(users.email, email))
-      .execute();
-    if (user.length === 0) {
+      .findFirst();
+    if (!user) {
       return res.status(400).send({ message: 'User not found' });
     }
 
