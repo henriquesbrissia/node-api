@@ -13,7 +13,7 @@ export const registerUser = async (req, res) => {
       .from(users)
       .where(eq(users.email, email))
       .execute();
-    if (existingUser.lenght > 0) {
+    if (existingUser.length > 0) {
       return res.status(400).send({ message: 'User already exists' });
     }
 
@@ -41,7 +41,7 @@ export const loginUser = async (req, res) => {
       .from(users)
       .where(eq(users.email, email))
       .execute();
-    if (user.lenght === 0) {
+    if (user.length === 0) {
       return res.status(400).send({ message: 'Invalid credentials' });
     }
 
@@ -73,7 +73,7 @@ export const requestPasswordReset = async (req, res) => {
       .from(users)
       .where(eq(users.email, email))
       .execute();
-    if (user.lenght === 0) {
+    if (user.length === 0) {
       return res.status(400).send({ message: 'User not found' });
     }
 
