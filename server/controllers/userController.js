@@ -7,6 +7,10 @@ import { eq } from 'drizzle-orm';
 export const registerUser = async (req, res) => {
   const { email, password } = req.body;
 
+  if (!email || !password) {
+    return res.status(400).send({ message: 'Email and password are required' });
+  }
+
   try {
     const existingUser = await db
       .select()
@@ -35,6 +39,10 @@ export const registerUser = async (req, res) => {
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
+  if (!email || !password) {
+    return res.status(400).send({ message: 'Email and password are required' });
+  }
+
   try {
     const user = await db
       .select()
@@ -61,6 +69,10 @@ export const loginUser = async (req, res) => {
 export const requestPasswordReset = async (req, res) => {
   const { email } = req.body;
 
+  if (!email) {
+    return res.status(400).send({ message: 'Email is required' });
+  }
+
   try {
     const user = await db
       .select()
@@ -81,6 +93,10 @@ export const requestPasswordReset = async (req, res) => {
 
 export const resetPassword = async (req, res) => {
   const { resetToken, newPassword } = req.body;
+
+  if (!newPassword) {
+    return res.status(400).send({ message: 'New passsword is required' });
+  }
 
   try {
     const decoded = verifyToken(resetToken);
