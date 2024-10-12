@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import { signToken, verifyToken } from '../utils/jwt.js';
 import db from '../drizzle/db.js';
 import { users } from '../drizzle/schema.js';
 import { eq } from 'drizzle-orm';
@@ -50,13 +50,7 @@ export const loginUser = async (req, res) => {
       return res.status(400).send({ message: 'Invalid credentials' });
     }
 
-    const token = jwt.sign(
-      { id: user[0].id, email: user[0].email },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: '1h',
-      }
-    );
+    const token = signToken({ id: user.id, email: user.email }, '1h');
 
     res.status(200).send({ token });
   } catch (error) {
@@ -77,13 +71,7 @@ export const requestPasswordReset = async (req, res) => {
       return res.status(400).send({ message: 'User not found' });
     }
 
-    const resetToken = jwt.sign(
-      { id: user[0].id, email: user[0].email },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: '15m',
-      }
-    );
+    const resetToken = resetToken({ id: user.id, email: user.email }, '15m');
 
     res.status(200).send({ resetToken });
   } catch (error) {
@@ -95,7 +83,7 @@ export const resetPassword = async (req, res) => {
   const { resetToken, newPassword } = req.body;
 
   try {
-    const decoded = jwt.verify(resetToken, process.env.JWT_SECRET);
+    const decoded = verifyToken(resetToken);
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
