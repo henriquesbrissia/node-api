@@ -8,15 +8,13 @@ export const protect = async (req, res) => {
     try {
       token = req.headers.authorization.split(' ')[1];
 
-      const decoded = await req.jwtVerify();
+      const decoded = await req.jwtVerify(token);
 
       req.user = decoded;
     } catch (error) {
       return res.status(401).send({ message: 'Not authorized, invalid token' });
     }
-  }
-
-  if (!token) {
+  } else {
     return res.status(401).send({ message: 'Not authorized, absent token' });
   }
 };
