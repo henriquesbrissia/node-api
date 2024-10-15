@@ -85,7 +85,7 @@ export const requestPasswordReset = async (req, res) => {
       return res.status(400).send({ message: 'User not found' });
     }
 
-    const resetToken = resetToken({ id: user.id, email: user.email }, '15m');
+    const resetToken = signToken({ id: user.id, email: user.email }, '15m');
 
     res.status(200).send({ resetToken });
   } catch (error) {
