@@ -9,11 +9,7 @@ import { protect } from '../middlewares/userMiddleware.js';
 async function userRoutes(app, options) {
   app.post('/sign-up', registerUser);
   app.post('/sign-in', { preValidation: [protect] }, loginUser);
-  app.post(
-    '/forgot-password',
-    { preValidation: [protect] },
-    requestPasswordReset
-  );
+  app.post('/forgot-password', requestPasswordReset);
   app.post('/reset-password', { preValidation: [protect] }, resetPassword);
 }
 
