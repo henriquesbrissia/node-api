@@ -34,6 +34,7 @@ export const registerUser = async (req, res) => {
     res.status(201).send(newUser);
   } catch (error) {
     res.status(500).send({ message: 'Server error' });
+    console.error(error);
   }
 };
 
@@ -65,6 +66,7 @@ export const loginUser = async (req, res) => {
     res.status(200).send({ token });
   } catch (error) {
     res.status(500).send({ message: 'Server error' });
+    console.error(error);
   }
 };
 
@@ -90,6 +92,7 @@ export const requestPasswordReset = async (req, res) => {
     res.status(200).send({ resetToken });
   } catch (error) {
     res.status(500).send({ message: 'Server error' });
+    console.error(error);
   }
 };
 
@@ -113,5 +116,6 @@ export const resetPassword = async (req, res) => {
     res.status(200).send({ message: 'Password updated successfully' });
   } catch (error) {
     res.status(400).send({ message: 'Invalid or expired token' });
+    console.error(error);
   }
 };
