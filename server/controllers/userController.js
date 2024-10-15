@@ -12,11 +12,10 @@ export const registerUser = async (req, res) => {
   }
 
   try {
-    const existingUser = await db
-      .select()
-      .from(users)
-      .where(eq(users.email, email))
-      .findFirst();
+    const existingUser = await db.query.users.findFirst({
+      where: eq(users.email, email),
+    });
+
     if (existingUser) {
       return res.status(400).send({ message: 'User already exists' });
     }
@@ -46,11 +45,9 @@ export const loginUser = async (req, res) => {
   }
 
   try {
-    const user = await db
-      .select()
-      .from(users)
-      .where(eq(users.email, email))
-      .findFirst();
+    const user = await db.query.users.findFirst({
+      where: eq(users.email, email),
+    });
     if (!user) {
       return res.status(400).send({ message: 'Invalid credentials' });
     }
@@ -78,11 +75,9 @@ export const requestPasswordReset = async (req, res) => {
   }
 
   try {
-    const user = await db
-      .select()
-      .from(users)
-      .where(eq(users.email, email))
-      .findFirst();
+    const user = await db.query.users.findFirst({
+      where: eq(users.email, email),
+    });
     if (!user) {
       return res.status(400).send({ message: 'User not found' });
     }
