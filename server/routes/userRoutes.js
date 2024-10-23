@@ -12,7 +12,7 @@ async function userRoutes(app, options) {
   app.post('/sign-in', loginUser);
   app.post('/forgot-password', requestPasswordReset);
   app.post('/reset-password', { preValidation: [protect] }, resetPassword);
-  app.get('/dashboard', getUser);
+  app.get('/', { preValidation: [protect] }, getUser);
 }
 
 export default userRoutes;
