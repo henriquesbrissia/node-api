@@ -116,16 +116,22 @@ export const resetPassword = async (req, res) => {
 };
 
 export const getUser = async (req, res) => {
+  const userId = req.user.id;
+
   try {
     const user = await db.query.users.findFirst({
-      where: eq(users.email, req.user.email),
+      where: eq(users.id, userId),
+      columns: {
+        email: true,
+        id: true,
+      },
     });
 
     if (!user) {
       return res.status(404).send({ message: 'User not found' });
     }
 
-    return res.send({ email: user.email });
+    return res.status(200).send(user);
   } catch (error) {
     req.log.error(error);
     res.status(500).send({ message: 'Server error' });
