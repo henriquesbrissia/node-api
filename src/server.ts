@@ -3,7 +3,7 @@ import cors from '@fastify/cors';
 import userRoutes from './routes/userRoutes';
 import jwt from '@fastify/jwt';
 
-const app: FastifyInstance = fastify({ logger: true });
+export const app: FastifyInstance = fastify({ logger: true });
 
 await app.register(cors);
 
