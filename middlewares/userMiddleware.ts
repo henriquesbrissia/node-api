@@ -1,5 +1,9 @@
-export const protect = async (req, res) => {
-  let token;
+import { FastifyRequest, FastifyReply } from "fastify";
+
+export const protect = async (
+  req: FastifyRequest, 
+  res: FastifyReply) => {
+  let token: any;
 
   if (
     req.headers.authorization &&

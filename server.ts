@@ -1,14 +1,14 @@
-import fastify from 'fastify';
+import fastify, { FastifyInstance } from 'fastify';
 import cors from '@fastify/cors';
-import userRoutes from './routes/userRoutes.js';
+import userRoutes from './routes/userRoutes';
 import jwt from '@fastify/jwt';
 
-const app = fastify({ logger: true });
+const app: FastifyInstance = fastify({ logger: true });
 
 await app.register(cors);
 
 app.register(jwt, {
-  secret: process.env.JWT_SECRET,
+  secret: process.env.JWT_SECRET!,
 });
 
 app.register(userRoutes, { prefix: '/api/user' });

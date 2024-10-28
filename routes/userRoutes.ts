@@ -1,13 +1,14 @@
+import { FastifyInstance } from 'fastify';
 import {
   registerUser,
   loginUser,
   requestPasswordReset,
   resetPassword,
   getUser,
-} from '../controllers/userController.js';
-import { protect } from '../middlewares/userMiddleware.js';
+} from '../controllers/userController';
+import { protect } from '../middlewares/userMiddleware';
 
-async function userRoutes(app, options) {
+async function userRoutes(app: FastifyInstance) {
   app.post('/sign-up', registerUser);
   app.post('/sign-in', loginUser);
   app.post('/forgot-password', requestPasswordReset);
