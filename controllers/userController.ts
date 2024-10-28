@@ -1,10 +1,25 @@
 import bcrypt from 'bcrypt';
-import { signToken, verifyToken } from '../utils/jwt.js';
-import db from '../drizzle/db.js';
-import { users } from '../drizzle/schema.js';
+import { signToken, verifyToken } from '../utils/jwt';
+import db from '../drizzle/db';
+import { users } from '../drizzle/schema';
 import { eq } from 'drizzle-orm';
+import { FastifyRequest, FastifyReply } from 'fastify';
 
-export const registerUser = async (req, res) => {
+type UserReqBody = {
+  email: string
+  password: string
+}
+
+type ResetPasswordRequest = {
+  Body: {
+    resetToken: string;
+    newPassword: string;
+  };
+}
+
+export const registerUser = async (
+  req: FastifyRequest<{ Body: UserReqBody }>, 
+  res: FastifyReply) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -37,7 +52,9 @@ export const registerUser = async (req, res) => {
   }
 };
 
-export const loginUser = async (req, res) => {
+export const loginUser = async (
+  req: FastifyRequest<{ Body: UserReqBody }>, 
+  res: FastifyReply) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -67,7 +84,9 @@ export const loginUser = async (req, res) => {
   }
 };
 
-export const requestPasswordReset = async (req, res) => {
+export const requestPasswordReset = async (
+  req: FastifyRequest<{ Body: {email: string} }>, 
+  res: FastifyReply) => {
   const { email } = req.body;
 
   if (!email) {
@@ -91,11 +110,14 @@ export const requestPasswordReset = async (req, res) => {
   }
 };
 
-export const resetPassword = async (req, res) => {
+export const resetPassword = async (
+  req: FastifyRequest<ResetPasswordRequest>, 
+  res: FastifyReply
+) => {
   const { resetToken, newPassword } = req.body;
 
   if (!newPassword) {
-    return res.status(400).send({ message: 'New passsword is required' });
+    return res.status(400).send({ message: 'New password is required' });
   }
 
   try {
@@ -115,8 +137,10 @@ export const resetPassword = async (req, res) => {
   }
 };
 
-export const getUser = async (req, res) => {
-  const userId = req.user.id;
+export const getUser = async (
+  req: FastifyRequest | any, 
+  res: FastifyReply) => {
+  const userId = req.user?.id;
 
   try {
     const user = await db.query.users.findFirst({
