@@ -1,9 +1,10 @@
 import { FastifyRequest, FastifyReply } from "fastify";
+import { verifyToken } from "src/utils/jwt";
 
 export const protect = async (
   req: FastifyRequest, 
   res: FastifyReply) => {
-  let token: any;
+  let token: string;
 
   if (
     req.headers.authorization &&
@@ -12,7 +13,7 @@ export const protect = async (
     try {
       token = req.headers.authorization.split(' ')[1];
 
-      const decoded = await req.jwtVerify(token);
+      const decoded = verifyToken(token);
 
       req.user = decoded;
     } catch (error) {

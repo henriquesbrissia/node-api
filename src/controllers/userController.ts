@@ -11,10 +11,8 @@ type UserReqBody = {
 }
 
 type ResetPasswordRequest = {
-  Body: {
-    resetToken: string;
-    newPassword: string;
-  };
+  resetToken: string;
+  newPassword: string;
 }
 
 export const registerUser = async (
@@ -111,10 +109,10 @@ export const requestPasswordReset = async (
 };
 
 export const resetPassword = async (
-  req: FastifyRequest<ResetPasswordRequest>, 
+  req: FastifyRequest, 
   res: FastifyReply
 ) => {
-  const { resetToken, newPassword } = req.body;
+  const { resetToken, newPassword } = req.body as ResetPasswordRequest;
 
   if (!newPassword) {
     return res.status(400).send({ message: 'New password is required' });
@@ -138,9 +136,10 @@ export const resetPassword = async (
 };
 
 export const getUser = async (
-  req: FastifyRequest | any, 
+  req: FastifyRequest, 
   res: FastifyReply) => {
-  const userId = req.user?.id;
+  const user = req.user as { id: string }
+  const userId = user.id;
 
   try {
     const user = await db.query.users.findFirst({

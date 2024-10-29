@@ -5,7 +5,7 @@ type TokenPayload = {
   email: string
 }
 
-export const signToken = (payload: TokenPayload, expiresIn: string | number): string => {
+export const signToken = (payload: TokenPayload, expiresIn: string): string => {
   return app.jwt.sign(payload, { expiresIn });
 };
 
